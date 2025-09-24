@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System</title>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --background-color: #ffffff;
+            --surface-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #7c3aed;
+            --secondary-color: #a855f7;
+            --background-color: #1a1a2e;
+            --surface-color: #16213e;
+            --text-color: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: #374151;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            background: var(--surface-color);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--surface-color);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #c82333 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #218838 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e0a800 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color) 0%, #138496 100%);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .grade-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .grade-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grade-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+
+        .grade-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .grade-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .grade-card h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface-color);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .student-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .student-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 95%;
+            max-height: 95%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--danger-color);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(180deg);
+        }
+
+        .error {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 10px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .success {
+            color: var(--success-color);
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 10px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .fee-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .fee-paid {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .fee-partial {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        .fee-unpaid {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), #20c997);
+            transition: width 0.5s ease;
+            border-radius: 15px;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .filter-bar {
+            background: var(--surface-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .club-card {
+            background: var(--surface-color);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin: 15px 0;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.info {
+            background: var(--info-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .page {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .grade-card {
+                padding: 40px 20px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .modal-content {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        .student-photo {
+            width: 80px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 200px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-primary {
+            background: rgba(102, 126, 234, 0.2);
+            color: var(--primary-color);
+        }
+
+        .badge-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sign Up Page -->
+        <div id="signup" class="page active">
+            <div class="header">
+                <h1>🎓 School Management System</h1>
+                <p>Create your account to get started</p>
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>📝 Full Name</label>
+                    <input type="text" id="fullname" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>👤 Username</label>
+                    <input type="text" id="username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label>📞 Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label>📧 Email Address</label>
+                    <input type="email" id="email" placeholder="Enter email address" required>
+                </div>
+                <div class="form-group">
+                    <label>👥 User Category</label>
+                    <select id="userCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Admin">Admin (2 slots available)</option>
+                        <option value="DoS_Social_Affairs">DoS Social Affairs (2 slots available)</option>
+                        <option value="Finance">Finance (2 slots available)</option>
+                        <option value="DoS_Exam">DoS Exam</option>
+                        <option value="Teacher">Teacher</option>
+                    </select>
+                </div>
+                <div class="form-group password-toggle">
+                    <label>🔒 Password</label>
+                    <input type="password" id="password" placeholder="Create a password" required>
+                    <button type="button" onclick="togglePassword('password')">👁️</button>
+                </div>
+                <div class="form-group password-toggle">
+                    <label>🔒 Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    <button type="button" onclick="togglePassword('confirmPassword')">👁️</button>
+                </div>
+                <div id="signupError" class="error"></div>
+                <div id="signupSuccess" class="success"></div>
+                <button type="submit" class="btn">✨ Create Account</button>
+                <p style="margin-top: 20px; text-align: center;">
+                    Already have an account? <a href="#" onclick="showPage('login')" style="color: var(--primary-color); font-weight: 600;">Login here</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Login Page -->
+        <div id="login" class="page">
+            <div class="header">
+                <h1>🔐 Login</h1>
+                <p>Access your account</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>👤 Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group password-toggle">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <button type="button" onclick="togglePassword('loginPassword')">👁️</button>
+                </div>
+                <div id="loginError" class="error"></div>
+                <button type="submit" class="btn">🚀 Login</button>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="#" onclick="showPage('forgot-password')" style="color: var(--primary-color);">Forgot Password?</a> |
+                    <a href="#" onclick="showPage('signup')" style="color: var(--primary-color);">Create Account</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Forgot Password Page -->
+        <div id="forgot-password" class="page">
+            <div class="header">
+                <h1>🔄 Forgot Password</h1>
+                <p>Enter your email to receive reset code</p>
+            </div>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <label>📧 Email Address</label>
+                    <input type="email" id="forgotEmail" placeholder="Enter your registered email" required>
+                </div>
+                <div id="forgotError" class="error"></div>
+                <div id="forgotSuccess" class="success"></div>
+                <button type="submit" class="btn">📨 Send Reset Code</button>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="#" onclick="showPage('login')" style="color: var(--primary-color);">← Back to Login</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Reset Password Page -->
+        <div id="reset-password" class="page">
+            <div class="header">
+                <h1>🔑 Reset Password</h1>
+                <p>Enter the code sent to your email</p>
+            </div>
+            <form id="resetForm">
+                <div class="form-group">
+                    <label>🔢 4-Digit Reset Code</label>
+                    <input type="text" id="resetCode" maxlength="4" placeholder="Enter 4-digit code" required>
+                </div>
+                <div class="form-group password-toggle">
+                    <label>🔒 New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" required>
+                    <button type="button" onclick="togglePassword('newPassword')">👁️</button>
+                </div>
+                <div class="form-group password-toggle">
+                    <label>🔒 Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required>
+                    <button type="button" onclick="togglePassword('confirmNewPassword')">👁️</button>
+                </div>
+                <div id="resetError" class="error"></div>
+                <button type="submit" class="btn">✅ Reset Password</button>
+            </form>
+        </div>
+
+        <!-- Home Page -->
+        <div id="home" class="page">
+            <div class="navbar">
+                <div class="nav-links">
+                    <a href="#" class="nav-link" onclick="showPage('home')">🏠 Home</a>
+                    <a href="#" class="nav-link" onclick="showAddStudentModal()">➕ Add Student</a>
+                    <a href="#" class="nav-link" onclick="showPaymentsPage()" id="paymentsLink">💳 Payments</a>
+                    <a href="#" class="nav-link" onclick="showExamsPage()" id="examsLink">📊 Exams</a>
+                    <a href="#" class="nav-link" onclick="showClubsPage()">🎯 Clubs</a>
+                    <a href="#" class="nav-link" onclick="showMyTable()" id="myTableLink">📋 My Table</a>
+                    <a href="#" class="nav-link" onclick="showGraduatedStudents()">🎓 Graduated</a>
+                </div>
+                <div class="user-info">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+                    <span id="welcomeUser">Welcome!</span>
+                    <button class="btn btn-secondary" onclick="showAccountSettings()">⚙️ Settings</button>
+                    <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <div class="header">
+                <h1>📚 School Management Dashboard</h1>
+                <p>Manage students, exams, payments, and more</p>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3 id="grade7Count">0</h3>
+                    <p>📚 Grade 7 Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="grade8Count">0</h3>
+                    <p>📖 Grade 8 Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="grade9Count">0</h3>
+                    <p>📝 Grade 9 Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalStudents">0</h3>
+                    <p>👥 Total Students</p>
+                </div>
+            </div>
+
+            <div class="grade-container">
+                <div class="grade-card" onclick="showGrade(7)">
+                    <h2>GRADE 7</h2>
+                    <p>View and manage Grade 7 students</p>
+                    <div class="badge badge-primary" id="grade7Badge">0 Students</div>
+                </div>
+                <div class="grade-card" onclick="showGrade(8)">
+                    <h2>GRADE 8</h2>
+                    <p>View and manage Grade 8 students</p>
+                    <div class="badge badge-primary" id="grade8Badge">0 Students</div>
+                </div>
+                <div class="grade-card" onclick="showGrade(9)">
+                    <h2>GRADE 9</h2>
+                    <p>View and manage Grade 9 students</p>
+                    <div class="badge badge-primary" id="grade9Badge">0 Students</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Pages -->
+        <div id="grade-page" class="page">
+            <div class="navbar">
+                <div class="nav-links">
+                    <a href="#" class="nav-link" onclick="showPage('home')">🏠 Home</a>
+                    <a href="#" class="nav-link" onclick="showAddStudentModal()">➕ Add Student</a>
+                    <a href="#" class="nav-link" onclick="showBulkFeeModal()">💰 Bulk Fees</a>
+                </div>
+                <div class="user-info">
+                    <span id="gradePageTitle">Grade Students</span>
+                    <button class="btn btn-secondary" onclick="showPage('home')">← Back</button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <input type="text" placeholder="🔍 Search students..." id="studentSearch" onkeyup="searchStudents()">
+                </div>
+                <button class="btn btn-info" onclick="exportStudentsToExcel()">📊 Export Excel</button>
+            </div>
+
+            <div class="table-container">
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>📷 Photo</th>
+                            <th>📝 Adm No.</th>
+                            <th>👤 Name</th>
+                            <th>⚧ Gender</th>
+                            <th>
